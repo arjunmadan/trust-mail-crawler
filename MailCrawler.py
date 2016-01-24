@@ -31,37 +31,35 @@ def getEmailContent(IdList):
 	subject = []
 	email   = []
 	date    = []
+	to      = []
+	
 	while len(IdList) > 0:
 		msgId = IdList.pop();
 		html = urlopen("http://markmail.org/message/" + msgId).read()
 		soup = BeautifulSoup(html, "lxml")
-		#Message Content
+		
 		msgBody.append(soup.find("div", "messagebody").text)
-		#Subject
+		
 		for tag in soup.find("a", "subject"):
 			subject.append(tag.string)
-		#for tag in soup.findAll("td", "from"):
-		#	print tag	
-				#$("table#headers").children().children().each(function(i, element){
-				#	var a = $(this);
-				#	switch($(this).children('th').text()) {
-				#		case 'From:':
-				#			console.log("From: " + $(this).children('td').text());
-				#			break;
-				#		case 'Date:':
-				#			console.log("Date: " + $(this).children('td').text());
-				#			break;
-				#		case 'List:':
-				#			console.log("List: " + $(this).children('td').text());
-				#			break;
-				#		default:
-				#			break;
-				
-				#console.log($("div.messagebody").text());
-			
+		
+		for tag in soup.findAll("th"):
+			if tag.text == "From:":
+				email.append(tag.find_next_sibling("td").text)
+			elif tag.text == "Date:":
+				date.append(tag.find_next_sibling("td").text)
+			elif tag.text == "List:":
+				to.append(tag.find_next_sibling("td").text)
+	'''
+	for i in range (0, 10):
+		print "From:" + email[i]
+		print "To:" + to[i]
+		print "Subject: " + subject[i]
+		print "Date: " + date[i]
+	'''		
 msgCount = getMessageCount(organization)
 
-for i in range(0, 1):
+for i in range(0, msgCount / 10):
 	getEmailUrls()
 
 
